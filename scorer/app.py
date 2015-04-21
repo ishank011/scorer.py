@@ -7,21 +7,35 @@ from time import sleep
 from scorer.ui import getUserInput
 from scorer.options import scorer_parser
 
+args = scorer_parser().parse_args()
 
 logger = logging.getLogger("scorer.app")
-logger.setLevel(logging.DEBUG)
-fh = logging.FileHandler("scorer.log")
+if args.log_level is 'none':
+    logger.setLevel(logging.disable)
+if args.log_level is 'info':
+    logger.setLevel(logging.INFO)
+if args.log_level is 'debug':
+    logger.setLevel(logging.DEBUG)
+if args.log_level is 'warn':
+    logger.setLevel(logging.WARN)
+if args.log_level is 'error':
+    logger.setLevel(logging.ERROR)
+
+#TODO 
+# Find out why the other modules are not logging
+
+fh = logging.FileHandler(args.log_file)
 fh.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
-ch.setFormatter(formatter)
 logger.addHandler(fh)
-logger.addHandler(ch)
+if args.debug:
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
 
 def main():
-    args = scorer_parser().parse_args()
     NO_LIVE_MATCHES = "No Match in progress"
     SLEEP_INTERVAL = args.delay
     logger.info("SLEEP_INTERVAL: {}".format(SLEEP_INTERVAL))
