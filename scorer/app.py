@@ -5,6 +5,7 @@ import logging
 from sys import version_info
 from time import sleep
 from scorer.ui import getUserInput
+from scorer.options import scorer_parser
 
 
 logger = logging.getLogger("scorer.app")
@@ -19,10 +20,12 @@ ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
-NO_LIVE_MATCHES = "No Match in progress"
-SLEEP_INTERVAL = 60 
-
 def main():
+    args = scorer_parser().parse_args()
+    NO_LIVE_MATCHES = "No Match in progress"
+    SLEEP_INTERVAL = args.delay
+    logger.info("SLEEP_INTERVAL: {}".format(SLEEP_INTERVAL))
+
     while True:
         logger.debug("Getting the xml and matches list")
         xml, matches = fs.findMatchesAvailable()
